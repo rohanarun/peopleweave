@@ -1,6 +1,6 @@
 {
   "name": "@managed-oss/peopleweave",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Policies, onboarding, leave, attendance, reviews, and offboarding without automated employment decisions.",
   "type": "module",
   "license": "MIT",
