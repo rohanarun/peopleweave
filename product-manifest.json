@@ -1,0 +1,1588 @@
+{
+  "schemaVersion": 1,
+  "release": {
+    "productVersion": "0.1.0",
+    "backendRelease": "v0.4.2",
+    "backendCommit": "20c4a704c77cbbbff1da995e1d91b937625a8aa4",
+    "backendSourceSnapshotSha256": "d0b7b1079d4924eb7369c788a979a707d45bb63470290e6ac33ee5662d78f69f",
+    "generatedAt": "2026-08-24T00:00:00.000Z",
+    "generator": "managed-oss-cloud/scripts/generate-product-repositories.mjs"
+  },
+  "product": {
+    "slug": "peopleweave",
+    "command": "peopleweave",
+    "mcpPrefix": "peopleweave",
+    "environmentPrefix": "PEOPLEWEAVE",
+    "name": "PeopleWeave",
+    "tagline": "Policies, onboarding, leave, attendance, reviews, and offboarding without automated employment decisions.",
+    "repository": "https://github.com/rohanarun/peopleweave",
+    "license": "MIT",
+    "accent": "#8ddc8b",
+    "accentDark": "#387a38"
+  },
+  "module": {
+    "id": "people",
+    "category": "People operations",
+    "description": "Connect policies, onboarding, leave, attendance, reviews, and offboarding without delegating employment decisions to a model.",
+    "minimumHostedPlan": "scale",
+    "resourceClass": "high",
+    "resourceRequirements": {
+      "class": "high",
+      "minimumCpuMillicores": 500,
+      "minimumMemoryMiB": 768,
+      "includedStorageGb": 10,
+      "recommendedWorkerConcurrency": 2
+    },
+    "recordTypes": [
+      "people-profile",
+      "onboarding",
+      "people-policy",
+      "policy-acknowledgement",
+      "leave-request",
+      "leave-decision",
+      "attendance",
+      "attendance-correction",
+      "people-review",
+      "review-submission",
+      "ai-proposal-request",
+      "access-revocation-receipt",
+      "offboarding-receipt",
+      "extended-business-command-receipt"
+    ],
+    "aiCapabilities": [
+      "Evidence-cited growth proposals",
+      "Human employment decisions",
+      "Immutable policy and attendance correction receipts"
+    ]
+  },
+  "backend": {
+    "defaultUrl": "https://cloud.getsupers.com",
+    "workspaceEndpoint": "/api/suite/workspace",
+    "actionEndpointPattern": "/api/suite/modules/people/actions/{actionId}",
+    "authentication": "Bearer API token",
+    "databaseBoundary": "All shared database access and tenant isolation remain behind the managed-oss-cloud API."
+  },
+  "cleanRoom": {
+    "statement": "Original clean-room implementation of the people operations software category, designed and written independently.",
+    "sourceBoundary": "Public category behavior informed requirements; implementation and product identity are original."
+  },
+  "actions": [
+    {
+      "id": "create-profile",
+      "moduleId": "people",
+      "title": "Create purpose-bound people profile",
+      "description": "Create a minimum-data profile bound to one authenticated workspace member, manager, dates, and privacy class.",
+      "operation": "command",
+      "recordType": "people-profile",
+      "requiredFields": [
+        "employeeRef",
+        "displayName",
+        "employmentType",
+        "startDate",
+        "managerRef",
+        "privacy",
+        "idempotencyKey"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "employeeRef",
+          "displayName",
+          "employmentType",
+          "startDate",
+          "managerRef",
+          "privacy",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "employeeRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Exact workspace user ID of the person represented by this profile."
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "Display name."
+          },
+          "employmentType": {
+            "type": "string",
+            "enum": [
+              "employee",
+              "contractor",
+              "intern",
+              "temporary"
+            ],
+            "description": "Employment relationship."
+          },
+          "startDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Employment start date."
+          },
+          "managerRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Manager workspace reference."
+          },
+          "privacy": {
+            "type": "string",
+            "enum": [
+              "restricted",
+              "people-team",
+              "manager-and-person"
+            ],
+            "description": "Profile privacy class."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "employeeRef": "workspace-user-0001",
+        "displayName": "Avery",
+        "employmentType": "employee",
+        "startDate": "2026-09-01",
+        "managerRef": "workspace-user-0001",
+        "privacy": "people-team",
+        "idempotencyKey": "people.create-profile.example-0001"
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_create_profile",
+      "cliExample": "supersuite action people create-profile '{\"employeeRef\":\"workspace-user-0001\",\"displayName\":\"Avery\",\"employmentType\":\"employee\",\"startDate\":\"2026-09-01\",\"managerRef\":\"workspace-user-0001\",\"privacy\":\"people-team\",\"idempotencyKey\":\"people.create-profile.example-0001\"}'",
+      "risk": "low",
+      "destructive": false,
+      "externalEffect": "none",
+      "idempotent": true,
+      "requiresApproval": false,
+      "supportsDryRun": false,
+      "minimumRole": "admin",
+      "effectBoundary": "tenant-record",
+      "backendMcpToolName": "people_create_profile",
+      "productMcpToolName": "peopleweave_create_profile",
+      "productCliExample": "peopleweave action create-profile '{\"employeeRef\":\"workspace-user-0001\",\"displayName\":\"Avery\",\"employmentType\":\"employee\",\"startDate\":\"2026-09-01\",\"managerRef\":\"workspace-user-0001\",\"privacy\":\"people-team\",\"idempotencyKey\":\"people.create-profile.example-0001\"}'"
+    },
+    {
+      "id": "start-onboarding",
+      "moduleId": "people",
+      "title": "Start approved onboarding",
+      "description": "Start a human-approved onboarding checklist for an existing profile without making an employment decision.",
+      "operation": "command",
+      "recordType": "onboarding",
+      "requiredFields": [
+        "profileId",
+        "ownerRef",
+        "dueAt",
+        "checklist",
+        "idempotencyKey",
+        "dryRun"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "profileId",
+          "ownerRef",
+          "dueAt",
+          "checklist",
+          "idempotencyKey",
+          "dryRun"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "People profile ID."
+          },
+          "ownerRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Onboarding owner."
+          },
+          "dueAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC completion target."
+          },
+          "checklist": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Checklist item.",
+              "required": [
+                "key",
+                "title"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "description": "Stable item key."
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500,
+                  "description": "Item title."
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 100,
+            "description": "Bounded checklist items."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          },
+          "dryRun": {
+            "type": "boolean",
+            "description": "Validate and preview the exact effect without changing domain state."
+          },
+          "approval": {
+            "type": "object",
+            "description": "Attributed human approval of the exact requested effect.",
+            "required": [
+              "approved",
+              "approvedBy",
+              "approvedAt",
+              "decisionId",
+              "reason"
+            ],
+            "properties": {
+              "approved": {
+                "const": true
+              },
+              "approvedBy": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "Approving workspace identity."
+              },
+              "approvedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Approval clock."
+              },
+              "decisionId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._:-]{16,200}$"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "Reason grounded in reviewed evidence."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "profileId": "00000000-0000-4000-8000-000000000100",
+        "ownerRef": "workspace-user-0001",
+        "dueAt": "2026-09-05T17:00:00.000Z",
+        "checklist": [
+          {
+            "key": "security",
+            "title": "Complete security briefing"
+          }
+        ],
+        "idempotencyKey": "people.start-onboarding.example-0001",
+        "dryRun": true
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_start_onboarding",
+      "cliExample": "supersuite action people start-onboarding '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"ownerRef\":\"workspace-user-0001\",\"dueAt\":\"2026-09-05T17:00:00.000Z\",\"checklist\":[{\"key\":\"security\",\"title\":\"Complete security briefing\"}],\"idempotencyKey\":\"people.start-onboarding.example-0001\",\"dryRun\":true}'",
+      "risk": "high",
+      "destructive": false,
+      "externalEffect": "employment",
+      "idempotent": true,
+      "requiresApproval": true,
+      "supportsDryRun": true,
+      "minimumRole": "admin",
+      "effectBoundary": "approved-ledger-command",
+      "backendMcpToolName": "people_start_onboarding",
+      "productMcpToolName": "peopleweave_start_onboarding",
+      "productCliExample": "peopleweave action start-onboarding '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"ownerRef\":\"workspace-user-0001\",\"dueAt\":\"2026-09-05T17:00:00.000Z\",\"checklist\":[{\"key\":\"security\",\"title\":\"Complete security briefing\"}],\"idempotencyKey\":\"people.start-onboarding.example-0001\",\"dryRun\":true}'"
+    },
+    {
+      "id": "publish-policy",
+      "moduleId": "people",
+      "title": "Publish approved people policy",
+      "description": "Publish an exact content-addressed policy revision after attributed human approval.",
+      "operation": "command",
+      "recordType": "people-policy",
+      "requiredFields": [
+        "key",
+        "title",
+        "content",
+        "contentHash",
+        "effectiveAt",
+        "audience",
+        "idempotencyKey",
+        "dryRun"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "key",
+          "title",
+          "content",
+          "contentHash",
+          "effectiveAt",
+          "audience",
+          "idempotencyKey",
+          "dryRun"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "Stable policy key."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Policy title."
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100000,
+            "description": "Human-authored policy."
+          },
+          "contentHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "SHA-256 of exact policy content."
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC effective clock."
+          },
+          "audience": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "description": "Policy audience."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          },
+          "dryRun": {
+            "type": "boolean",
+            "description": "Validate and preview the exact effect without changing domain state."
+          },
+          "approval": {
+            "type": "object",
+            "description": "Attributed human approval of the exact requested effect.",
+            "required": [
+              "approved",
+              "approvedBy",
+              "approvedAt",
+              "decisionId",
+              "reason"
+            ],
+            "properties": {
+              "approved": {
+                "const": true
+              },
+              "approvedBy": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "Approving workspace identity."
+              },
+              "approvedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Approval clock."
+              },
+              "decisionId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._:-]{16,200}$"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "Reason grounded in reviewed evidence."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "key": "remote-work",
+        "title": "Remote work",
+        "content": "Approved policy text",
+        "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "effectiveAt": "2026-09-01T00:00:00.000Z",
+        "audience": "All team members",
+        "idempotencyKey": "people.publish-policy.example-0001",
+        "dryRun": true
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_publish_policy",
+      "cliExample": "supersuite action people publish-policy '{\"key\":\"remote-work\",\"title\":\"Remote work\",\"content\":\"Approved policy text\",\"contentHash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"effectiveAt\":\"2026-09-01T00:00:00.000Z\",\"audience\":\"All team members\",\"idempotencyKey\":\"people.publish-policy.example-0001\",\"dryRun\":true}'",
+      "risk": "high",
+      "destructive": false,
+      "externalEffect": "publication",
+      "idempotent": true,
+      "requiresApproval": true,
+      "supportsDryRun": true,
+      "minimumRole": "admin",
+      "effectBoundary": "approved-ledger-command",
+      "backendMcpToolName": "people_publish_policy",
+      "productMcpToolName": "peopleweave_publish_policy",
+      "productCliExample": "peopleweave action publish-policy '{\"key\":\"remote-work\",\"title\":\"Remote work\",\"content\":\"Approved policy text\",\"contentHash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"effectiveAt\":\"2026-09-01T00:00:00.000Z\",\"audience\":\"All team members\",\"idempotencyKey\":\"people.publish-policy.example-0001\",\"dryRun\":true}'"
+    },
+    {
+      "id": "acknowledge-policy",
+      "moduleId": "people",
+      "title": "Record policy acknowledgement",
+      "description": "Bind a subject-provided acknowledgement receipt to the exact published policy hash.",
+      "operation": "command",
+      "recordType": "policy-acknowledgement",
+      "requiredFields": [
+        "policyId",
+        "profileId",
+        "contentHash",
+        "acknowledgedAt",
+        "subjectReceiptId",
+        "idempotencyKey"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "policyId",
+          "profileId",
+          "contentHash",
+          "acknowledgedAt",
+          "subjectReceiptId",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "policyId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Published policy ID."
+          },
+          "profileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "People profile ID."
+          },
+          "contentHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Exact acknowledged policy hash."
+          },
+          "acknowledgedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Subject acknowledgement clock."
+          },
+          "subjectReceiptId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Immutable subject interaction receipt."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "policyId": "00000000-0000-4000-8000-000000000100",
+        "profileId": "00000000-0000-4000-8000-000000000101",
+        "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "acknowledgedAt": "2026-09-02T14:00:00.000Z",
+        "subjectReceiptId": "ack-42",
+        "idempotencyKey": "people.acknowledge-policy.example-0001"
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_acknowledge_policy",
+      "cliExample": "supersuite action people acknowledge-policy '{\"policyId\":\"00000000-0000-4000-8000-000000000100\",\"profileId\":\"00000000-0000-4000-8000-000000000101\",\"contentHash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"acknowledgedAt\":\"2026-09-02T14:00:00.000Z\",\"subjectReceiptId\":\"ack-42\",\"idempotencyKey\":\"people.acknowledge-policy.example-0001\"}'",
+      "risk": "low",
+      "destructive": false,
+      "externalEffect": "consent",
+      "idempotent": true,
+      "requiresApproval": false,
+      "supportsDryRun": false,
+      "minimumRole": "member",
+      "effectBoundary": "tenant-record",
+      "backendMcpToolName": "people_acknowledge_policy",
+      "productMcpToolName": "peopleweave_acknowledge_policy",
+      "productCliExample": "peopleweave action acknowledge-policy '{\"policyId\":\"00000000-0000-4000-8000-000000000100\",\"profileId\":\"00000000-0000-4000-8000-000000000101\",\"contentHash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"acknowledgedAt\":\"2026-09-02T14:00:00.000Z\",\"subjectReceiptId\":\"ack-42\",\"idempotencyKey\":\"people.acknowledge-policy.example-0001\"}'"
+    },
+    {
+      "id": "request-leave",
+      "moduleId": "people",
+      "title": "Request leave",
+      "description": "Create a private leave request without approving, denying, scoring, or inferring eligibility.",
+      "operation": "command",
+      "recordType": "leave-request",
+      "requiredFields": [
+        "profileId",
+        "leaveKind",
+        "startsOn",
+        "endsOn",
+        "subjectReceiptId",
+        "idempotencyKey"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "profileId",
+          "leaveKind",
+          "startsOn",
+          "endsOn",
+          "subjectReceiptId",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "People profile ID."
+          },
+          "leaveKind": {
+            "type": "string",
+            "enum": [
+              "vacation",
+              "sick",
+              "caregiving",
+              "personal",
+              "other"
+            ],
+            "description": "Leave category."
+          },
+          "startsOn": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "First requested date."
+          },
+          "endsOn": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Last requested date."
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "Optional subject-provided note."
+          },
+          "subjectReceiptId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Immutable subject request receipt."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "profileId": "00000000-0000-4000-8000-000000000100",
+        "leaveKind": "vacation",
+        "startsOn": "2026-09-10",
+        "endsOn": "2026-09-12",
+        "note": "Planned time away",
+        "subjectReceiptId": "leave-request-42",
+        "idempotencyKey": "people.request-leave.example-0001"
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_request_leave",
+      "cliExample": "supersuite action people request-leave '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"leaveKind\":\"vacation\",\"startsOn\":\"2026-09-10\",\"endsOn\":\"2026-09-12\",\"note\":\"Planned time away\",\"subjectReceiptId\":\"leave-request-42\",\"idempotencyKey\":\"people.request-leave.example-0001\"}'",
+      "risk": "low",
+      "destructive": false,
+      "externalEffect": "none",
+      "idempotent": true,
+      "requiresApproval": false,
+      "supportsDryRun": false,
+      "minimumRole": "member",
+      "effectBoundary": "tenant-record",
+      "backendMcpToolName": "people_request_leave",
+      "productMcpToolName": "peopleweave_request_leave",
+      "productCliExample": "peopleweave action request-leave '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"leaveKind\":\"vacation\",\"startsOn\":\"2026-09-10\",\"endsOn\":\"2026-09-12\",\"note\":\"Planned time away\",\"subjectReceiptId\":\"leave-request-42\",\"idempotencyKey\":\"people.request-leave.example-0001\"}'"
+    },
+    {
+      "id": "decide-leave",
+      "moduleId": "people",
+      "title": "Record human leave decision",
+      "description": "Record an approved or denied leave decision with an attributed employment-decision receipt.",
+      "operation": "command",
+      "recordType": "leave-decision",
+      "requiredFields": [
+        "requestId",
+        "decision",
+        "rationale",
+        "decisionReceiptId",
+        "idempotencyKey",
+        "dryRun"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "requestId",
+          "decision",
+          "rationale",
+          "decisionReceiptId",
+          "idempotencyKey",
+          "dryRun"
+        ],
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Leave request ID."
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "denied"
+            ],
+            "description": "Human decision."
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "Decision rationale."
+          },
+          "decisionReceiptId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Immutable HR decision receipt."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          },
+          "dryRun": {
+            "type": "boolean",
+            "description": "Validate and preview the exact effect without changing domain state."
+          },
+          "approval": {
+            "type": "object",
+            "description": "Attributed human approval of the exact requested effect.",
+            "required": [
+              "approved",
+              "approvedBy",
+              "approvedAt",
+              "decisionId",
+              "reason"
+            ],
+            "properties": {
+              "approved": {
+                "const": true
+              },
+              "approvedBy": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "Approving workspace identity."
+              },
+              "approvedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Approval clock."
+              },
+              "decisionId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._:-]{16,200}$"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "Reason grounded in reviewed evidence."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "requestId": "00000000-0000-4000-8000-000000000100",
+        "decision": "approved",
+        "rationale": "Coverage confirmed",
+        "decisionReceiptId": "leave-decision-42",
+        "idempotencyKey": "people.decide-leave.example-0001",
+        "dryRun": true
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_decide_leave",
+      "cliExample": "supersuite action people decide-leave '{\"requestId\":\"00000000-0000-4000-8000-000000000100\",\"decision\":\"approved\",\"rationale\":\"Coverage confirmed\",\"decisionReceiptId\":\"leave-decision-42\",\"idempotencyKey\":\"people.decide-leave.example-0001\",\"dryRun\":true}'",
+      "risk": "high",
+      "destructive": false,
+      "externalEffect": "employment",
+      "idempotent": true,
+      "requiresApproval": true,
+      "supportsDryRun": true,
+      "minimumRole": "admin",
+      "effectBoundary": "approved-ledger-command",
+      "backendMcpToolName": "people_decide_leave",
+      "productMcpToolName": "peopleweave_decide_leave",
+      "productCliExample": "peopleweave action decide-leave '{\"requestId\":\"00000000-0000-4000-8000-000000000100\",\"decision\":\"approved\",\"rationale\":\"Coverage confirmed\",\"decisionReceiptId\":\"leave-decision-42\",\"idempotencyKey\":\"people.decide-leave.example-0001\",\"dryRun\":true}'"
+    },
+    {
+      "id": "record-attendance",
+      "moduleId": "people",
+      "title": "Record attendance interval",
+      "description": "Append an exact attendance interval with subject and source provenance.",
+      "operation": "command",
+      "recordType": "attendance",
+      "requiredFields": [
+        "profileId",
+        "clockInAt",
+        "clockOutAt",
+        "source",
+        "sourceReceiptId",
+        "idempotencyKey"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "profileId",
+          "clockInAt",
+          "clockOutAt",
+          "source",
+          "sourceReceiptId",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "People profile ID."
+          },
+          "clockInAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC clock-in."
+          },
+          "clockOutAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC clock-out."
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "subject-entry",
+              "approved-import",
+              "time-clock"
+            ],
+            "description": "Attendance source."
+          },
+          "sourceReceiptId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Immutable source receipt."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "profileId": "00000000-0000-4000-8000-000000000100",
+        "clockInAt": "2026-09-01T13:00:00.000Z",
+        "clockOutAt": "2026-09-01T21:00:00.000Z",
+        "source": "subject-entry",
+        "sourceReceiptId": "attendance-42",
+        "idempotencyKey": "people.record-attendance.example-0001"
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_record_attendance",
+      "cliExample": "supersuite action people record-attendance '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"clockInAt\":\"2026-09-01T13:00:00.000Z\",\"clockOutAt\":\"2026-09-01T21:00:00.000Z\",\"source\":\"subject-entry\",\"sourceReceiptId\":\"attendance-42\",\"idempotencyKey\":\"people.record-attendance.example-0001\"}'",
+      "risk": "low",
+      "destructive": false,
+      "externalEffect": "none",
+      "idempotent": true,
+      "requiresApproval": false,
+      "supportsDryRun": false,
+      "minimumRole": "member",
+      "effectBoundary": "tenant-record",
+      "backendMcpToolName": "people_record_attendance",
+      "productMcpToolName": "peopleweave_record_attendance",
+      "productCliExample": "peopleweave action record-attendance '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"clockInAt\":\"2026-09-01T13:00:00.000Z\",\"clockOutAt\":\"2026-09-01T21:00:00.000Z\",\"source\":\"subject-entry\",\"sourceReceiptId\":\"attendance-42\",\"idempotencyKey\":\"people.record-attendance.example-0001\"}'"
+    },
+    {
+      "id": "correct-attendance",
+      "moduleId": "people",
+      "title": "Correct attendance with audit",
+      "description": "Supersede an attendance interval after explicit approval while preserving its original clocks and source.",
+      "operation": "command",
+      "recordType": "attendance-correction",
+      "requiredFields": [
+        "attendanceId",
+        "expectedVersion",
+        "clockInAt",
+        "clockOutAt",
+        "reason",
+        "correctionReceiptId",
+        "idempotencyKey",
+        "dryRun"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "attendanceId",
+          "expectedVersion",
+          "clockInAt",
+          "clockOutAt",
+          "reason",
+          "correctionReceiptId",
+          "idempotencyKey",
+          "dryRun"
+        ],
+        "properties": {
+          "attendanceId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Attendance record ID."
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Current attendance version."
+          },
+          "clockInAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Corrected UTC clock-in."
+          },
+          "clockOutAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Corrected UTC clock-out."
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "Correction reason."
+          },
+          "correctionReceiptId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Immutable correction receipt."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          },
+          "dryRun": {
+            "type": "boolean",
+            "description": "Validate and preview the exact effect without changing domain state."
+          },
+          "approval": {
+            "type": "object",
+            "description": "Attributed human approval of the exact requested effect.",
+            "required": [
+              "approved",
+              "approvedBy",
+              "approvedAt",
+              "decisionId",
+              "reason"
+            ],
+            "properties": {
+              "approved": {
+                "const": true
+              },
+              "approvedBy": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "Approving workspace identity."
+              },
+              "approvedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Approval clock."
+              },
+              "decisionId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._:-]{16,200}$"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "Reason grounded in reviewed evidence."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "attendanceId": "00000000-0000-4000-8000-000000000100",
+        "expectedVersion": 1,
+        "clockInAt": "2026-09-01T13:05:00.000Z",
+        "clockOutAt": "2026-09-01T21:00:00.000Z",
+        "reason": "Subject-confirmed clock correction",
+        "correctionReceiptId": "correction-42",
+        "idempotencyKey": "people.correct-attendance.example-0001",
+        "dryRun": true
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_correct_attendance",
+      "cliExample": "supersuite action people correct-attendance '{\"attendanceId\":\"00000000-0000-4000-8000-000000000100\",\"expectedVersion\":1,\"clockInAt\":\"2026-09-01T13:05:00.000Z\",\"clockOutAt\":\"2026-09-01T21:00:00.000Z\",\"reason\":\"Subject-confirmed clock correction\",\"correctionReceiptId\":\"correction-42\",\"idempotencyKey\":\"people.correct-attendance.example-0001\",\"dryRun\":true}'",
+      "risk": "critical",
+      "destructive": true,
+      "externalEffect": "employment",
+      "idempotent": true,
+      "requiresApproval": true,
+      "supportsDryRun": true,
+      "minimumRole": "admin",
+      "effectBoundary": "approved-ledger-command",
+      "backendMcpToolName": "people_correct_attendance",
+      "productMcpToolName": "peopleweave_correct_attendance",
+      "productCliExample": "peopleweave action correct-attendance '{\"attendanceId\":\"00000000-0000-4000-8000-000000000100\",\"expectedVersion\":1,\"clockInAt\":\"2026-09-01T13:05:00.000Z\",\"clockOutAt\":\"2026-09-01T21:00:00.000Z\",\"reason\":\"Subject-confirmed clock correction\",\"correctionReceiptId\":\"correction-42\",\"idempotencyKey\":\"people.correct-attendance.example-0001\",\"dryRun\":true}'"
+    },
+    {
+      "id": "open-review",
+      "moduleId": "people",
+      "title": "Open structured review",
+      "description": "Open a purpose-bound review with a human-authored rubric and named authenticated reviewer.",
+      "operation": "command",
+      "recordType": "people-review",
+      "requiredFields": [
+        "profileId",
+        "cycleKey",
+        "reviewerRef",
+        "dueAt",
+        "rubric",
+        "idempotencyKey"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "profileId",
+          "cycleKey",
+          "reviewerRef",
+          "dueAt",
+          "rubric",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "People profile ID."
+          },
+          "cycleKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "Stable review cycle key."
+          },
+          "reviewerRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Exact authenticated reviewer workspace user ID."
+          },
+          "dueAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC due clock."
+          },
+          "rubric": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Review criterion.",
+              "required": [
+                "key",
+                "question"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "description": "Criterion key."
+                },
+                "question": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000,
+                  "description": "Criterion question."
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 100,
+            "description": "Human-authored review criteria."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "profileId": "00000000-0000-4000-8000-000000000100",
+        "cycleKey": "2026-h2",
+        "reviewerRef": "workspace-user-0001",
+        "dueAt": "2026-12-01T17:00:00.000Z",
+        "rubric": [
+          {
+            "key": "delivery",
+            "question": "What outcomes are supported by evidence?"
+          }
+        ],
+        "idempotencyKey": "people.open-review.example-0001"
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_open_review",
+      "cliExample": "supersuite action people open-review '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"cycleKey\":\"2026-h2\",\"reviewerRef\":\"workspace-user-0001\",\"dueAt\":\"2026-12-01T17:00:00.000Z\",\"rubric\":[{\"key\":\"delivery\",\"question\":\"What outcomes are supported by evidence?\"}],\"idempotencyKey\":\"people.open-review.example-0001\"}'",
+      "risk": "low",
+      "destructive": false,
+      "externalEffect": "none",
+      "idempotent": true,
+      "requiresApproval": false,
+      "supportsDryRun": false,
+      "minimumRole": "admin",
+      "effectBoundary": "tenant-record",
+      "backendMcpToolName": "people_open_review",
+      "productMcpToolName": "peopleweave_open_review",
+      "productCliExample": "peopleweave action open-review '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"cycleKey\":\"2026-h2\",\"reviewerRef\":\"workspace-user-0001\",\"dueAt\":\"2026-12-01T17:00:00.000Z\",\"rubric\":[{\"key\":\"delivery\",\"question\":\"What outcomes are supported by evidence?\"}],\"idempotencyKey\":\"people.open-review.example-0001\"}'"
+    },
+    {
+      "id": "submit-review",
+      "moduleId": "people",
+      "title": "Submit human review",
+      "description": "Submit human-authored responses and selected evidence; the system does not generate ratings or employment decisions.",
+      "operation": "command",
+      "recordType": "review-submission",
+      "requiredFields": [
+        "reviewId",
+        "submittedBy",
+        "responses",
+        "evidenceIds",
+        "submissionReceiptId",
+        "idempotencyKey"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "reviewId",
+          "submittedBy",
+          "responses",
+          "evidenceIds",
+          "submissionReceiptId",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "reviewId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Review ID."
+          },
+          "submittedBy": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Submitting workspace identity."
+          },
+          "responses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Review response.",
+              "required": [
+                "criterionKey",
+                "response"
+              ],
+              "properties": {
+                "criterionKey": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "description": "Criterion key."
+                },
+                "response": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000,
+                  "description": "Human-authored response."
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 100,
+            "description": "Criterion responses."
+          },
+          "evidenceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Evidence record ID."
+            },
+            "minItems": 1,
+            "maxItems": 500,
+            "description": "Tenant-owned record IDs selected as evidence."
+          },
+          "submissionReceiptId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Immutable submission receipt."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "reviewId": "00000000-0000-4000-8000-000000000100",
+        "submittedBy": "workspace-user-0001",
+        "responses": [
+          {
+            "criterionKey": "delivery",
+            "response": "Shipped the approved release."
+          }
+        ],
+        "evidenceIds": [
+          "00000000-0000-4000-8000-000000000101"
+        ],
+        "submissionReceiptId": "review-42",
+        "idempotencyKey": "people.submit-review.example-0001"
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_submit_review",
+      "cliExample": "supersuite action people submit-review '{\"reviewId\":\"00000000-0000-4000-8000-000000000100\",\"submittedBy\":\"workspace-user-0001\",\"responses\":[{\"criterionKey\":\"delivery\",\"response\":\"Shipped the approved release.\"}],\"evidenceIds\":[\"00000000-0000-4000-8000-000000000101\"],\"submissionReceiptId\":\"review-42\",\"idempotencyKey\":\"people.submit-review.example-0001\"}'",
+      "risk": "low",
+      "destructive": false,
+      "externalEffect": "none",
+      "idempotent": true,
+      "requiresApproval": false,
+      "supportsDryRun": false,
+      "minimumRole": "member",
+      "effectBoundary": "tenant-record",
+      "backendMcpToolName": "people_submit_review",
+      "productMcpToolName": "peopleweave_submit_review",
+      "productCliExample": "peopleweave action submit-review '{\"reviewId\":\"00000000-0000-4000-8000-000000000100\",\"submittedBy\":\"workspace-user-0001\",\"responses\":[{\"criterionKey\":\"delivery\",\"response\":\"Shipped the approved release.\"}],\"evidenceIds\":[\"00000000-0000-4000-8000-000000000101\"],\"submissionReceiptId\":\"review-42\",\"idempotencyKey\":\"people.submit-review.example-0001\"}'"
+    },
+    {
+      "id": "propose-growth-plan",
+      "moduleId": "people",
+      "title": "Queue cited growth-plan proposal",
+      "description": "Queue evidence-cited development ideas; it cannot score a person, change employment, or assign required work.",
+      "operation": "ai",
+      "recordType": "ai-proposal-request",
+      "requiredFields": [
+        "profileId",
+        "goal",
+        "evidenceIds",
+        "idempotencyKey"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "profileId",
+          "goal",
+          "evidenceIds",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "People profile ID."
+          },
+          "goal": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "Development objective."
+          },
+          "evidenceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Evidence record ID."
+            },
+            "minItems": 1,
+            "maxItems": 500,
+            "description": "Tenant-owned record IDs selected as evidence."
+          },
+          "modelId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Optional expected workspace-configured model identifier. When omitted, the trusted workspace policy is used; never a credential."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "profileId": "00000000-0000-4000-8000-000000000100",
+        "goal": "Propose optional learning opportunities grounded in submitted evidence.",
+        "evidenceIds": [
+          "00000000-0000-4000-8000-000000000101"
+        ],
+        "idempotencyKey": "people.propose-growth-plan.example-0001"
+      },
+      "requiredScope": "ai",
+      "mcpToolName": "people_propose_growth_plan",
+      "cliExample": "supersuite action people propose-growth-plan '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"goal\":\"Propose optional learning opportunities grounded in submitted evidence.\",\"evidenceIds\":[\"00000000-0000-4000-8000-000000000101\"],\"idempotencyKey\":\"people.propose-growth-plan.example-0001\"}'",
+      "risk": "medium",
+      "destructive": false,
+      "externalEffect": "model",
+      "idempotent": true,
+      "requiresApproval": false,
+      "supportsDryRun": false,
+      "minimumRole": "member",
+      "effectBoundary": "proposal-only",
+      "backendMcpToolName": "people_propose_growth_plan",
+      "productMcpToolName": "peopleweave_propose_growth_plan",
+      "productCliExample": "peopleweave action propose-growth-plan '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"goal\":\"Propose optional learning opportunities grounded in submitted evidence.\",\"evidenceIds\":[\"00000000-0000-4000-8000-000000000101\"],\"idempotencyKey\":\"people.propose-growth-plan.example-0001\"}'"
+    },
+    {
+      "id": "record-access-revocation",
+      "moduleId": "people",
+      "title": "Record verified access revocation",
+      "description": "Bind one system account revocation to the exact profile, source receipt, operator approval, and revocation clock before offboarding can close the profile.",
+      "operation": "command",
+      "recordType": "access-revocation-receipt",
+      "requiredFields": [
+        "profileId",
+        "system",
+        "accountRef",
+        "sourceReceiptId",
+        "revokedAt",
+        "idempotencyKey",
+        "dryRun"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "profileId",
+          "system",
+          "accountRef",
+          "sourceReceiptId",
+          "revokedAt",
+          "idempotencyKey",
+          "dryRun"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "People profile ID."
+          },
+          "system": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "System whose access was revoked."
+          },
+          "accountRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Pseudonymous account reference in that system."
+          },
+          "sourceReceiptId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Immutable receipt from the source system or approved operator workflow."
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Verified revocation clock."
+          },
+          "externalEvidenceToken": {
+            "type": "string",
+            "maxLength": 4096,
+            "description": "Short-lived hosting-layer attestation token for the exact external evidence. Required only when applying the effect, never for dry-run preview."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          },
+          "dryRun": {
+            "type": "boolean",
+            "description": "Validate and preview the exact effect without changing domain state."
+          },
+          "approval": {
+            "type": "object",
+            "description": "Attributed human approval of the exact requested effect.",
+            "required": [
+              "approved",
+              "approvedBy",
+              "approvedAt",
+              "decisionId",
+              "reason"
+            ],
+            "properties": {
+              "approved": {
+                "const": true
+              },
+              "approvedBy": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "Approving workspace identity."
+              },
+              "approvedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Approval clock."
+              },
+              "decisionId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._:-]{16,200}$"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "Reason grounded in reviewed evidence."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "profileId": "00000000-0000-4000-8000-000000000100",
+        "system": "identity-provider",
+        "accountRef": "workspace-user-0001",
+        "sourceReceiptId": "identity-revocation-42",
+        "revokedAt": "2026-09-30T20:45:00.000Z",
+        "idempotencyKey": "people.record-access-revocation.example-0001",
+        "dryRun": true
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_record_access_revocation",
+      "cliExample": "supersuite action people record-access-revocation '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"system\":\"identity-provider\",\"accountRef\":\"workspace-user-0001\",\"sourceReceiptId\":\"identity-revocation-42\",\"revokedAt\":\"2026-09-30T20:45:00.000Z\",\"idempotencyKey\":\"people.record-access-revocation.example-0001\",\"dryRun\":true}'",
+      "risk": "high",
+      "destructive": false,
+      "externalEffect": "access",
+      "idempotent": true,
+      "requiresApproval": true,
+      "supportsDryRun": true,
+      "minimumRole": "admin",
+      "effectBoundary": "approved-ledger-command",
+      "backendMcpToolName": "people_record_access_revocation",
+      "productMcpToolName": "peopleweave_record_access_revocation",
+      "productCliExample": "peopleweave action record-access-revocation '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"system\":\"identity-provider\",\"accountRef\":\"workspace-user-0001\",\"sourceReceiptId\":\"identity-revocation-42\",\"revokedAt\":\"2026-09-30T20:45:00.000Z\",\"idempotencyKey\":\"people.record-access-revocation.example-0001\",\"dryRun\":true}'"
+    },
+    {
+      "id": "offboard",
+      "moduleId": "people",
+      "title": "Record approved offboarding",
+      "description": "Close a profile only when the current owner's human approval decision ID matches the employment receipt and every selected tenant access-revocation receipt resolves to that exact profile.",
+      "operation": "command",
+      "recordType": "offboarding-receipt",
+      "requiredFields": [
+        "profileId",
+        "effectiveAt",
+        "reason",
+        "employmentDecisionReceiptId",
+        "accessRevocationReceiptIds",
+        "idempotencyKey",
+        "dryRun"
+      ],
+      "engine": "extended",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "profileId",
+          "effectiveAt",
+          "reason",
+          "employmentDecisionReceiptId",
+          "accessRevocationReceiptIds",
+          "idempotencyKey",
+          "dryRun"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "People profile ID."
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC offboarding clock."
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "Human decision rationale."
+          },
+          "employmentDecisionReceiptId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Exact decisionId from the attributable human approval envelope."
+          },
+          "accessRevocationReceiptIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Access-revocation receipt record ID."
+            },
+            "minItems": 1,
+            "maxItems": 100,
+            "description": "Tenant access-revocation receipt record IDs."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._:-]{16,200}$",
+            "description": "A retry-safe key unique to this logical mutation."
+          },
+          "dryRun": {
+            "type": "boolean",
+            "description": "Validate and preview the exact effect without changing domain state."
+          },
+          "approval": {
+            "type": "object",
+            "description": "Attributed human approval of the exact requested effect.",
+            "required": [
+              "approved",
+              "approvedBy",
+              "approvedAt",
+              "decisionId",
+              "reason"
+            ],
+            "properties": {
+              "approved": {
+                "const": true
+              },
+              "approvedBy": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "Approving workspace identity."
+              },
+              "approvedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Approval clock."
+              },
+              "decisionId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._:-]{16,200}$"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "description": "Reason grounded in reviewed evidence."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "exampleInput": {
+        "profileId": "00000000-0000-4000-8000-000000000100",
+        "effectiveAt": "2026-09-30T21:00:00.000Z",
+        "reason": "Approved contract completion",
+        "employmentDecisionReceiptId": "offboarding.approval.0001",
+        "accessRevocationReceiptIds": [
+          "00000000-0000-4000-8000-000000000101"
+        ],
+        "idempotencyKey": "people.offboard.example-0001",
+        "dryRun": true
+      },
+      "requiredScope": "write",
+      "mcpToolName": "people_offboard",
+      "cliExample": "supersuite action people offboard '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"effectiveAt\":\"2026-09-30T21:00:00.000Z\",\"reason\":\"Approved contract completion\",\"employmentDecisionReceiptId\":\"offboarding.approval.0001\",\"accessRevocationReceiptIds\":[\"00000000-0000-4000-8000-000000000101\"],\"idempotencyKey\":\"people.offboard.example-0001\",\"dryRun\":true}'",
+      "risk": "critical",
+      "destructive": true,
+      "externalEffect": "employment",
+      "idempotent": true,
+      "requiresApproval": true,
+      "supportsDryRun": true,
+      "minimumRole": "owner",
+      "effectBoundary": "approved-ledger-command",
+      "backendMcpToolName": "people_offboard",
+      "productMcpToolName": "peopleweave_offboard",
+      "productCliExample": "peopleweave action offboard '{\"profileId\":\"00000000-0000-4000-8000-000000000100\",\"effectiveAt\":\"2026-09-30T21:00:00.000Z\",\"reason\":\"Approved contract completion\",\"employmentDecisionReceiptId\":\"offboarding.approval.0001\",\"accessRevocationReceiptIds\":[\"00000000-0000-4000-8000-000000000101\"],\"idempotencyKey\":\"people.offboard.example-0001\",\"dryRun\":true}'"
+    }
+  ]
+}
