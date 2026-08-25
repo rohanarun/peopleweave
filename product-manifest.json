@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "release": {
-    "productVersion": "0.1.1",
+    "productVersion": "0.2.0",
     "backendRelease": "v0.4.2",
     "backendCommit": "20c4a704c77cbbbff1da995e1d91b937625a8aa4",
     "backendSourceSnapshotSha256": "d0b7b1079d4924eb7369c788a979a707d45bb63470290e6ac33ee5662d78f69f",
@@ -65,6 +65,186 @@
   "cleanRoom": {
     "statement": "Original clean-room implementation of the people operations software category, designed and written independently.",
     "sourceBoundary": "Public category behavior informed requirements; implementation and product identity are original."
+  },
+  "experience": {
+    "releaseBoundary": "Complete for every typed action declared by this product manifest; it does not claim feature parity with unrelated third-party products.",
+    "headline": "Policies",
+    "primaryActionId": "create-profile",
+    "quickActionIds": [
+      "create-profile",
+      "start-onboarding",
+      "publish-policy",
+      "acknowledge-policy"
+    ],
+    "navigation": [
+      "Overview",
+      "Records",
+      "Workflows",
+      "AI assistance",
+      "Settings"
+    ],
+    "workflowGroups": [
+      {
+        "name": "Create and capture",
+        "actionIds": [
+          "create-profile",
+          "start-onboarding",
+          "acknowledge-policy",
+          "request-leave",
+          "decide-leave",
+          "record-attendance",
+          "open-review",
+          "submit-review",
+          "record-access-revocation",
+          "offboard"
+        ]
+      },
+      {
+        "name": "Review and approve",
+        "actionIds": [
+          "publish-policy",
+          "correct-attendance"
+        ]
+      },
+      {
+        "name": "AI assistance",
+        "actionIds": [
+          "propose-growth-plan"
+        ]
+      }
+    ],
+    "metrics": [
+      {
+        "label": "Typed actions",
+        "value": 13
+      },
+      {
+        "label": "Record types",
+        "value": 14
+      },
+      {
+        "label": "AI workflows",
+        "value": 1
+      },
+      {
+        "label": "Review gates",
+        "value": 2
+      }
+    ],
+    "sampleRecords": [
+      {
+        "id": "demo-people-01",
+        "moduleId": "people",
+        "recordType": "people-profile",
+        "title": "People Profile Launch",
+        "state": "active",
+        "createdAt": "2026-08-18T13:30:00.000Z",
+        "updatedAt": "2026-08-25T13:15:00.000Z",
+        "data": {
+          "owner": "Operations",
+          "evidenceStatus": "verified",
+          "nextStep": "Create purpose-bound people profile"
+        }
+      },
+      {
+        "id": "demo-people-02",
+        "moduleId": "people",
+        "recordType": "onboarding",
+        "title": "Onboarding Operations",
+        "state": "in review",
+        "createdAt": "2026-08-19T13:30:00.000Z",
+        "updatedAt": "2026-08-25T12:15:00.000Z",
+        "data": {
+          "owner": "Product",
+          "evidenceStatus": "current",
+          "nextStep": "Start approved onboarding"
+        }
+      },
+      {
+        "id": "demo-people-03",
+        "moduleId": "people",
+        "recordType": "people-policy",
+        "title": "People Policy Evidence",
+        "state": "ready",
+        "createdAt": "2026-08-20T13:30:00.000Z",
+        "updatedAt": "2026-08-25T11:15:00.000Z",
+        "data": {
+          "owner": "Operations",
+          "evidenceStatus": "current",
+          "nextStep": "Publish approved people policy"
+        }
+      },
+      {
+        "id": "demo-people-04",
+        "moduleId": "people",
+        "recordType": "policy-acknowledgement",
+        "title": "Policy Acknowledgement Review",
+        "state": "scheduled",
+        "createdAt": "2026-08-21T13:30:00.000Z",
+        "updatedAt": "2026-08-25T10:15:00.000Z",
+        "data": {
+          "owner": "Product",
+          "evidenceStatus": "verified",
+          "nextStep": "Record policy acknowledgement"
+        }
+      },
+      {
+        "id": "demo-people-05",
+        "moduleId": "people",
+        "recordType": "leave-request",
+        "title": "Leave Request Pilot",
+        "state": "draft",
+        "createdAt": "2026-08-22T13:30:00.000Z",
+        "updatedAt": "2026-08-25T09:15:00.000Z",
+        "data": {
+          "owner": "Operations",
+          "evidenceStatus": "current",
+          "nextStep": "Request leave"
+        }
+      },
+      {
+        "id": "demo-people-06",
+        "moduleId": "people",
+        "recordType": "leave-decision",
+        "title": "Leave Decision Archive",
+        "state": "complete",
+        "createdAt": "2026-08-23T13:30:00.000Z",
+        "updatedAt": "2026-08-25T08:15:00.000Z",
+        "data": {
+          "owner": "Product",
+          "evidenceStatus": "current",
+          "nextStep": "Record human leave decision"
+        }
+      },
+      {
+        "id": "demo-people-07",
+        "moduleId": "people",
+        "recordType": "attendance",
+        "title": "Attendance Launch",
+        "state": "active",
+        "createdAt": "2026-08-24T13:30:00.000Z",
+        "updatedAt": "2026-08-25T07:15:00.000Z",
+        "data": {
+          "owner": "Operations",
+          "evidenceStatus": "verified",
+          "nextStep": "Record attendance interval"
+        }
+      },
+      {
+        "id": "demo-people-08",
+        "moduleId": "people",
+        "recordType": "attendance-correction",
+        "title": "Attendance Correction Operations",
+        "state": "in review",
+        "createdAt": "2026-08-25T13:30:00.000Z",
+        "updatedAt": "2026-08-25T06:15:00.000Z",
+        "data": {
+          "owner": "Product",
+          "evidenceStatus": "current",
+          "nextStep": "Correct attendance with audit"
+        }
+      }
+    ]
   },
   "actions": [
     {
