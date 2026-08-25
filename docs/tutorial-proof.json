@@ -1,0 +1,169 @@
+{
+  "schema": "managed-oss-functional-tutorial.v1",
+  "product": {
+    "slug": "peopleweave",
+    "name": "PeopleWeave",
+    "moduleId": "people",
+    "version": "0.3.1",
+    "manifestSha256": "4d910a4c47f0652292b5a2c4a931d8e77b284ec4fe402e51acf101ac44d4360e"
+  },
+  "backend": {
+    "release": "v0.4.4",
+    "commit": "148abce99b91d8b9fdc8aa41c3f0eba283796db4"
+  },
+  "testedAt": "2026-08-25T21:59:35.565Z",
+  "browser": {
+    "engine": "Chromium",
+    "version": "151.0.7922.174",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "functionalProof": {
+    "action": {
+      "id": "create-profile",
+      "title": "Create purpose-bound people profile",
+      "httpStatus": 200
+    },
+    "record": {
+      "id": "7d23146d-38dd-44d0-abac-c468c4575c74",
+      "recordType": "people-profile",
+      "title": "Avery",
+      "state": "active"
+    },
+    "detail": {
+      "httpStatus": 200,
+      "matched": true
+    },
+    "assertions": [
+      "browser-authenticated-real-backend",
+      "guided-form-submitted",
+      "action-http-200",
+      "durable-record-returned",
+      "record-detail-http-200",
+      "exact-record-reopened-in-ui"
+    ]
+  },
+  "timeline": [
+    {
+      "stepId": "overview",
+      "observedLabel": "Meet PeopleWeave",
+      "observedFact": "Open the real PeopleWeave workspace and identify its core workflow.",
+      "startMs": 0,
+      "endMs": 2250
+    },
+    {
+      "stepId": "connect",
+      "observedLabel": "Connect the workspace",
+      "observedFact": "Authenticate this browser to the isolated shared backend and load durable records.",
+      "startMs": 2250,
+      "endMs": 5375
+    },
+    {
+      "stepId": "configure",
+      "observedLabel": "Create purpose-bound people profile",
+      "observedFact": "Complete the guided, contract-validated form for the product's primary workflow.",
+      "startMs": 5375,
+      "endMs": 8000
+    },
+    {
+      "stepId": "execute",
+      "observedLabel": "Run the real workflow",
+      "observedFact": "Submit the action to the shared backend and require a successful durable result.",
+      "startMs": 8000,
+      "endMs": 10375
+    },
+    {
+      "stepId": "inspect",
+      "observedLabel": "Inspect the saved record",
+      "observedFact": "Search the product record view and reopen the exact record returned by the workflow.",
+      "startMs": 10375,
+      "endMs": 17000
+    }
+  ],
+  "explanation": {
+    "title": "Creating a Purpose-Bound People Profile in PeopleWeave",
+    "summary": "Step-by-step guide to connecting your PeopleWeave workspace, filling out the required profile details, executing the workflow, and inspecting the created durable record.",
+    "cues": [
+      {
+        "stepId": "overview",
+        "startMs": 0,
+        "endMs": 2250,
+        "label": "Explore PeopleWeave Workspace",
+        "subtitle": "View the PeopleWeave workspace overview and available policy operations."
+      },
+      {
+        "stepId": "connect",
+        "startMs": 2250,
+        "endMs": 5375,
+        "label": "Connect Workspace",
+        "subtitle": "Connect the workspace to establish an active session."
+      },
+      {
+        "stepId": "configure",
+        "startMs": 5375,
+        "endMs": 8000,
+        "label": "Configure People Profile",
+        "subtitle": "Fill in the required profile fields including employee reference, display name, and privacy class."
+      },
+      {
+        "stepId": "execute",
+        "startMs": 8000,
+        "endMs": 10375,
+        "label": "Run Workflow",
+        "subtitle": "Submit the form by clicking Run workflow to create the people profile."
+      },
+      {
+        "stepId": "inspect",
+        "startMs": 10375,
+        "endMs": 17000,
+        "label": "Inspect Durable Record",
+        "subtitle": "Search records and inspect the newly created active record for Avery."
+      }
+    ],
+    "generation": {
+      "provider": "OpenRouter",
+      "model": "google/gemini-3.7-flash",
+      "requestedModel": "google/gemini-3.7-flash",
+      "responseModel": "google/gemini-3.7-flash",
+      "responseId": "gen-1787695171-mvISvKDPcMKwYTMyBB7d",
+      "responseCreatedAt": "2026-08-25T21:59:31.000Z",
+      "input": {
+        "rawVideoSha256": "cfce891e2d088d21939841122c81d2a39bccc11dd63218cb576a6464c9a8b4db",
+        "workflowFactsSha256": "015677dc9b274c7efd0444f6fb5d624dab022fce5da9fabcf403abcf5839a7b6"
+      },
+      "usage": {
+        "promptTokens": 1567,
+        "completionTokens": 729,
+        "totalTokens": 2296
+      }
+    }
+  },
+  "video": {
+    "raw": {
+      "sha256": "cfce891e2d088d21939841122c81d2a39bccc11dd63218cb576a6464c9a8b4db",
+      "codec": "h264",
+      "width": 1280,
+      "height": 720,
+      "durationSeconds": 17,
+      "sizeBytes": 348930
+    },
+    "final": {
+      "file": "docs/tutorial.mp4",
+      "sha256": "52da11e164787623495157740f5e765f02a4a1ec1661104f096236a156b9d1a8",
+      "codec": "h264",
+      "width": 1280,
+      "height": 720,
+      "durationSeconds": 17,
+      "sizeBytes": 380838
+    },
+    "subtitles": {
+      "file": "docs/tutorial.srt",
+      "sha256": "cd479cc017890091b8032e5d6ecdca385139743d6b0c389f8ae4c58688f337da",
+      "format": "SubRip"
+    },
+    "overlaysBurnedIn": true,
+    "silent": true
+  }
+}

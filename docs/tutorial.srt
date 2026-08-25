@@ -1,0 +1,19 @@
+1
+00:00:00,000 --> 00:00:02,250
+View the PeopleWeave workspace overview and available policy operations.
+
+2
+00:00:02,250 --> 00:00:05,375
+Connect the workspace to establish an active session.
+
+3
+00:00:05,375 --> 00:00:08,000
+Fill in the required profile fields including employee reference, display name, and privacy class.
+
+4
+00:00:08,000 --> 00:00:10,375
+Submit the form by clicking Run workflow to create the people profile.
+
+5
+00:00:10,375 --> 00:00:17,000
+Search records and inspect the newly created active record for Avery.
